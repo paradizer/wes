@@ -1,0 +1,839 @@
+{% extends 'MainPage.html' %}
+
+{% block show_group %}
+
+    <style>
+           #loadImg{position:fixed; z-index:1000;  display:none;
+            align-items: center;
+            justify-content: center;}
+    </style>
+
+    <style type="text/css">
+        .top_label {
+        display: block;
+        }
+        .input-wrapper {
+            display: inline-block;
+            position: relative;
+        }
+       .input-wrapper:hover:after {
+           content: attr(data-title);
+           position: absolute;
+           left: 90%;
+           top: 50%;
+           z-index: 1;
+           background: #ffffcc;
+           font-size: 11px;
+           padding: 5px 10px;
+           border: 1px solid #000;
+           box-shadow: 5px 5px 8px 0px rgba(119, 119, 119, 0.64);
+           -moz-box-shadow: 5px 5px 8px 0px rgba(119, 119, 119, 0.64);
+           -webkit-box-shadow: 5px 5px 8px 0px rgba(119, 119, 119, 0.64);
+       }
+        .cool_button {
+              text-decoration: none;
+              outline: none;
+              display: inline-block;
+              padding: 10px 30px;
+              margin: 10px 20px;
+              position: relative;
+              overflow: hidden;
+              left: 20px;
+              border: 2px solid #96cbfe;
+              border-radius: 8px;
+              font-family: 'Montserrat', sans-serif;
+              color: #656b6a;
+              transition: .2s ease-in-out;
+        }
+        .cool_button:before {
+              content: "";
+              background: linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.5));
+              height: 50px;
+              width: 50px;
+              position: absolute;
+              top: -8px;
+              left: -75px;
+              transform: skewX(-45deg);
+        }
+        .cool_button:hover {
+              background-color: #6ab4fe;
+              color: #fff;
+        }
+        .cool_button:hover:before {
+              left: 150px;
+              transition: .5s ease-in-out;
+        }
+
+        .pageelem {
+            position: relative;
+            left: 40px;
+            up: 40px;
+        }
+
+        .pageelem_50 {
+            position: relative;
+            left: 50px;
+            up: 50px;
+        }
+        .pageelem_80 {
+            position: relative;
+            left: 80px;
+        }
+        .pageelem_80_ch {
+            position: relative;
+            left: 80px;
+            top: -2px;
+        }
+
+
+        .user_cpm {
+            position: relative;
+            left: 70px;
+        }
+
+        h4 {
+            position: relative;
+            left: 40px;
+        }
+
+        select {
+            position: relative;
+            left: 40px;
+        }
+
+    </style>
+
+    <script>
+
+        function startLoadingAnimation() // - функция запуска анимации
+        {
+          // найдем элемент с изображением загрузки и уберем невидимость:
+          var imgObj = $("#loadImg");
+          imgObj.show();
+
+          // вычислим в какие координаты нужно поместить изображение загрузки,
+          // чтобы оно оказалось в серидине страницы:
+          var centerY = $(window).scrollTop() + ($(window).height() + imgObj.height())/2;
+          var centerX = $(window).scrollLeft() + ($(window).width() + imgObj.width())/2;
+
+          // поменяем координаты изображения на нужные:
+          imgObj.offset({top:centerY, left:centerX});
+        }
+
+        $(document).submit(function () {
+            //json with all errors
+            task=$('input[name="choice"]').val()
+            var page_errors = {
+                //splits
+                "split_show_too_big": [false, "Один или несколько сплитов по показам имеют значение больше 1. "],
+                "split_show_has_char": [false, "Один или несколько сплитов по показам содержит недопустимые символы. "],
+                "splits_show_sum_too_big": [false, "Суммарное значение сплитов по показам не равно 1. "],
+                "some_show_splits_is_null": [false, "Один или несколько сплитов по показам не заполнены. "],
+
+                "split_budget_too_big": [false, "Один или несколько сплитов по бюджету имеют значение больше 1. "],
+                "split_budget_has_char": [false, "Один или несколько сплитов по бюджету содержит недопустимые символы. "],
+                "splits_budget_sum_too_big": [false, "Суммарное значение сплитов по бюджету не равно 1. "],
+                "some_budget_splits_is_null": [false, "Один или несколько сплитов по бюджету не заполнены. "],
+                //splits
+
+                //tasks_errors
+                "splits_is_empty":[false,"Необходимо заполнить сплиты. "],
+                "global_budget_is_missed":[false,"Общий бюджет не указан. "],
+                "global_R_is_missed":[false,"Охват на частоту не указан. "],
+                //tasks_errors
+
+                //max&min
+                "max_show_less_than_min": [false, "Один или несколько максимумов показов для каналов меньше чем указанный минимум. "],
+                "max_budget_less_than_min": [false, "Один или несколько максимумов бюджетов для каналов меньше чем указанный  минимум. "],
+                "max_show_have_char": [false, "Один или несколько максимумов показов содержит недопустимые символы. "],
+                "min_show_have_char": [false, "Один или несколько минимумов показов содержит недопустимые символы. "],
+                "max_budget_have_char": [false, "Один или несколько максимумов бюджетов содержит недопустимые символы. "],
+                "min_budget_have_char": [false, "Один или несколько минимумов бюджетов содержит недопустимые символы. "],
+                "Min_budgets_more_than_global": [false, "Сумма минимальных бюджетов превышает общий. "],
+                "Max_budgets_less_than_global": [false, "Совокупность максимальных бюджетов не позволит израсходовать общий бюджет. "],
+
+                "Min_shows_more_than_global": [false, "Сумма минимальных показов по цене превышают общий бюджет. "],
+                "Max_shows_less_than_global": [false, "Совокупность максимальной стоимости паказов не позволит израсходовать общий бюджет. "],
+                //max&min
+
+                //fixed budget&show
+                "group_budget_less_than_global": [false, "Указанные фиксированные бюджеты больше общего бюджета. "],
+                "fixed_budget_is_not_number": [false, "Один или несколько фиксированных бюджетов содержат недопустимые символы. "],
+                "fixed_budget_summ_is_not_equal": [false, "Сумма всех фиксированных бюджетов не равна общему бюджету. "],
+
+                "fixed_show_is_not_number": [false, "Один или несколько фиксированных показов содержат недопустимые символы. "],
+                "shows_budget_less_than_global": [false, "Указанные фиксированные показы стоят больше общего бюджета. "],
+                //fixed budget&show
+
+                //group_r
+                "global_r_more_than_max": [false, "Глобальный охват группы не может быть больше 1. "],
+                "global_r_has_char": [false, "Глобальный охват группы содержит недопустимые символы. "],
+                //group_r
+
+
+                //user_CPM
+                "user_CPM_has_char": [false, "Один или несколько пользовательских CPM содержат недопустимые символы. "],
+                //user_CPM
+
+                //group_budget
+                "global_budget_has_char": [false, "Глобальный бюджет содержит недопустимые символы. "],
+                //group_budget
+            }
+
+            return_flag = true
+            error_message = ""
+            //check all split show
+            total_split_show_value = 0
+            all_show_split_is_empty = true
+            all_show_split_have_data = false
+            var count = 0
+            var split_summ = 0
+            $('input[name$="channel_split_views"]').each(function (index, value) {
+                text = $(this).val()
+                if (text != "") {
+                    all_show_split_is_empty = false
+                    count = count + 1
+                    if (/[^[0-9.]/.test(text)) {
+                        page_errors['split_show_has_char'][0] = true
+                    }
+                    else {
+                        if (text > 1) {
+                            page_errors['split_show_too_big'][0] = true
+                        }
+                        else {
+                            split_summ = split_summ + parseFloat(text)
+                        }
+                    }
+                }
+
+                if (count != index + 1) {
+                    all_show_split_have_data = false
+                    if ((task=='task2')||(task=='task4')) {
+                        page_errors['some_show_splits_is_null'][0] = true
+                    }
+                }
+
+            })
+
+            if ((split_summ != 1)&&((task=='task2')||(task=='task4'))) {
+                page_errors['splits_show_sum_too_big'][0] = true
+            }
+
+            if (all_show_split_is_empty == true) {
+                page_errors['splits_show_sum_too_big'][0] = false
+                page_errors['some_show_splits_is_null'][0] = false
+            }
+            //check all split show
+
+            //$.each(page_errors, function (index, value) {
+            //     value[0]=false
+            //})
+
+            //check all split budget
+            total_split_budget_value = 0
+            all_budget_split_is_empty = true
+            all_budget_split_have_data = false
+            var count = 0
+            var split_summ = 0
+            $('input[name$="channel_split_budget"]').each(function (index, value) {
+                text = $(this).val()
+                if (text != "") {
+                    all_budget_split_is_empty = false
+                    count = count + 1
+                    if (/[^[0-9.]/.test(text)) {
+                        page_errors['split_budget_has_char'][0] = true
+                    }
+                    else {
+                        if (text > 1) {
+                            if ((task=='task2')||(task=='task4')) {
+                                page_errors['split_budget_too_big'][0] = true
+                            }
+                        }
+                        else {
+                            split_summ = split_summ + parseFloat(text)
+                        }
+                    }
+                }
+
+                if (count != index + 1) {
+                    all_budget_split_have_data = false
+                    if ((task=='task2')||(task=='task4'))
+            {
+                page_errors['some_budget_splits_is_null'][0] = true
+            }
+                }
+
+            })
+
+            if ((split_summ != 1)&&((task=='task2')||(task=='task4'))) {
+                page_errors['splits_budget_sum_too_big'][0] = true
+            }
+
+            if (all_budget_split_is_empty == true) {
+                page_errors['splits_budget_sum_too_big'][0] = false
+                page_errors['some_budget_splits_is_null'][0] = false
+            }
+            //check all split budget
+
+
+            if ($('input[name="channelgroup_budget"]').val() != "") {
+                group_budget = $('input[name="channelgroup_budget"]').val()
+                budget_summ = 0
+                budgets_count=0
+                $('input[name$="channel_fixed_budget"]').each(function (index, value) {
+                    text = $(this).val()
+                        if (text!="")
+                        {
+                            if (/[^[0-9.]/.test(text)) {
+                                page_errors['fixed_budget_is_not_number'][0]=true
+                            }
+                            else {
+                                budget_summ = budget_summ + parseFloat(text)
+                                budgets_count=budgets_count+1
+                            }
+                        }
+                })
+                if (group_budget < budget_summ) {
+                    page_errors['group_budget_less_than_global'][0] = true
+                }
+                if ((budgets_count==$('input[name$="channel_fixed_budget"]').length)&&(page_errors['group_budget_less_than_global'][0]!=true))
+                {
+                    if (group_budget != budget_summ) {
+                        page_errors['fixed_budget_summ_is_not_equal'][0]=true
+                    }
+
+                }
+
+            }
+
+
+            if ($('input[name="channelgroup_budget"]').val() != "") {
+                group_budget = $('input[name="channelgroup_budget"]').val()
+                budget_summ = 0
+                shows_count=0
+                $('input[name$="channel_fixed_show"]').each(function (index, value) {
+                    text = $(this).val()
+                    ids=this.name.split('-',2)
+                    chan_id=ids[0]
+                        if (text!="")
+                        {
+                            if (/[^[0-9.]/.test(text)) {
+                                page_errors['fixed_show_is_not_number'][0]=true
+                            }
+                            else {
+                                user_cpm=$('input[name='+chan_id+'-user_CPM]').val()
+                                if (user_cpm==""){
+                                    element_name = chan_id+"+TA"
+                                    user_cpm=$('label[id="' + element_name + '"]').text()
+                                }
+                                budget_summ = budget_summ + (parseFloat(text)*parseFloat(user_cpm))/1000
+                                budgets_count=budgets_count+1
+                            }
+                        }
+                })
+
+                if (group_budget < budget_summ) {
+                    page_errors['shows_budget_less_than_global'][0] = true
+                }
+
+            }
+
+
+            if ($('input[name="channelgroup_R_fixed"]').val() > 1) {
+                page_errors['global_r_more_than_max'][0]=true
+            }
+
+             if (/[^[0-9.]/.test($('input[name="channelgroup_R_fixed"]').val()))
+             {
+                 page_errors['global_r_has_char'][0]= true
+             }
+
+             if (/[^[0-9.]/.test($('input[name="channelgroup_budget"]').val()))
+             {
+                 page_errors['global_budget_has_char'][0]= true
+             }
+
+             shows_summ=0
+             $('input[name$="channel_show_limit_min"]').each(function (index, value) {
+                    text = $(this).val()
+                    ids=this.name.split('-',2)
+                    chan_id=ids[0]
+                    if (/[^[0-9.]/.test(text)) {
+                        page_errors['min_show_have_char'][0]=true
+                    }
+                     else {
+                        user_cpm = $('input[name=' + chan_id + '-user_CPM]').val()
+                        if (user_cpm == "") {
+                            element_name = chan_id + "+TA"
+                            user_cpm = $('label[id="' + element_name + '"]').text()
+                        }
+                        shows_summ = shows_summ + (parseFloat(text)*parseFloat(user_cpm))/1000
+                        if (shows_summ>$('input[name="channelgroup_budget"]').val() &&((task=='task2')||(task=='task4')))
+                        {
+                            page_errors["Min_shows_more_than_global"][0]=true
+                        }
+                    }
+
+             })
+
+            $('input[name$="user_CPM"]').each(function (index, value) {
+                text = $(this).val()
+                if (/[^[0-9.]/.test(text)) {
+                    page_errors['user_CPM_has_char'][0] = true
+                }
+            })
+
+             show_max_budget_summ=0
+             $('input[name$="channel_show_limit_max"]').each(function (index, value) {
+                    text = $(this).val()
+                    ids=this.name.split('-',2)
+                    chan_id=ids[0]
+                    if (/[^[0-9.]/.test(text)) {
+                        page_errors['max_show_have_char'][0]=true
+                    }
+                    else {
+                        show_min=$('input[name='+chan_id+'-channel_show_limit_min]').val()
+                        if (parseFloat(text)<parseFloat(show_min)){
+                            page_errors["max_show_less_than_min"][0]=true
+                        }
+                        user_cpm = $('input[name=' + chan_id + '-user_CPM]').val()
+                        if (user_cpm == "") {
+                            element_name = chan_id + "+TA"
+                            user_cpm = $('label[id="' + element_name + '"]').text()
+                        }
+                        show_max_budget_summ = show_max_budget_summ + (parseFloat(text)*parseFloat(user_cpm))/1000
+                    }
+             })
+             if (show_max_budget_summ<$('input[name="channelgroup_budget"]').val())
+             {
+                 page_errors["Max_shows_less_than_global"][0]=true
+             }
+
+
+                min_budgets_summ=0
+             $('input[name$="channel_budget_limit_min"]').each(function (index, value) {
+                    text = $(this).val()
+                    if (/[^[0-9.]/.test(text)) {
+                        page_errors['min_budget_have_char'][0]=true
+                    }
+                    else
+                    {
+                        min_budgets_summ=min_budgets_summ+parseFloat(text)
+                        if (min_budgets_summ>$('input[name="channelgroup_budget"]').val()){
+                            page_errors["Min_budgets_more_than_global"][0]=true
+                        }
+                    }
+
+             })
+
+             max_budgets_summ=0
+             max_budgets_count=0
+             $('input[name$="channel_budget_limit_max"]').each(function (index, value) {
+                    text = $(this).val()
+                    ids=this.name.split('-',2)
+                    chan_id=ids[0]
+                    if (/[^[0-9.]/.test(text)) {
+                        page_errors['max_budget_have_char'][0]=true
+                    }
+                    else
+                    {
+                        max_budgets_count=max_budgets_count+1
+                        max_budgets_summ=max_budgets_summ+parseFloat(text)
+                        budget_min=$('input[name='+chan_id+'-channel_budget_limit_min]').val()
+                        if (parseFloat(text)<parseFloat(budget_min)){
+                            page_errors["max_budget_less_than_min"][0]=true
+                        }
+
+                        if ((max_budgets_count==$('input[name$="channel_show_limit_max"]').length)&&(max_budgets_summ<$('input[name="channelgroup_budget"]').val()))
+                        {
+                            page_errors["Max_budgets_less_than_global"][0]=true
+                        }
+
+                    }
+             })
+
+            if ($('input[name="choice"]').val()=="task1") {
+                if ($('input[name="channelgroup_budget"]').val()=="") {
+                    page_errors["global_budget_is_missed"][0] = true
+                }
+            }
+
+            if ($('input[name="choice"]').val()=="task2") {
+                if ((all_budget_split_is_empty == true) && (all_show_split_is_empty == true)) {
+                    page_errors["splits_is_empty"][0] = true
+                }
+                if ($('input[name="channelgroup_budget"]').val()=="") {
+                    page_errors["global_budget_is_missed"][0] = true
+                }
+            }
+
+             if ($('input[name="choice"]').val()=="task3") {
+                if ($('input[name="channelgroup_R_fixed"]').val()=="") {
+                    page_errors["global_R_is_missed"][0] = true
+                }
+            }
+
+            if ($('input[name="choice"]').val()=="task4") {
+                if ((all_budget_split_is_empty == true) && (all_show_split_is_empty == true)) {
+                    page_errors["splits_is_empty"][0] = true
+                }
+                if ($('input[name="channelgroup_R_fixed"]').val()=="") {
+                    page_errors["global_R_is_missed"][0] = true
+                }
+            }
+
+
+            $.each(page_errors, function (index, value) {
+                if (value[0] == true) {
+                    return_flag = false
+                    error_message = error_message + value[1]
+                }
+
+            })
+
+            if (return_flag == false) {
+                html='<div class="alert alert-warning" role="alert">'+error_message+'</div>'
+                $('ul[class="result"]').html(html);
+                return false
+            }
+            else
+            {
+                $('input[id$="id_channelgroup_R_fixed"]').prop('disabled',false);
+                $('input[id$="id_channelgroup_budget"]').prop('disabled',false);
+                $('input[name$="channel_split_views"]').each(function (index, value) {
+                          $(this).prop('disabled', false)})
+                $('input[name$="channel_split_budget"]').each(function (index, value) {
+                              $(this).prop('disabled', false)})
+                startLoadingAnimation();
+            }
+
+        });
+
+
+        $(document).ready(function () {
+
+              $('input[id$="checbox_splits"]').change(function () {
+                  if ($('input[id$="checbox_splits"]').prop('checked')==false) {
+
+                      $('input[name$="channel_split_budget"]').each(function (index, value) {
+                          $(this).prop('disabled', true)
+                          $('input[id$="checbox_splits"]').prop('checked',false)
+
+                      })
+
+                      $('input[name$="channel_split_views"]').each(function (index, value) {
+                          $(this).prop('disabled', true)
+                          $('input[id$="channel_split_views"]').prop('checked',false)
+
+                      })
+                  }
+                      else
+                      {
+                          $('input[name$="channel_split_budget"]').each(function (index, value) {
+                              $(this).prop('disabled', false)
+                              $('input[id$="checbox_splits_budget"]').prop('checked',true)
+                          })
+
+                          $('input[name$="channel_split_views"]').each(function (index, value) {
+                          $(this).prop('disabled', false)
+                          $('input[id$="channel_split_views"]').prop('checked',true)
+
+                      })
+                      }
+
+
+              })
+
+              $('input[name$="min_budget"]').change(function () {
+                $('input[name$="max_r"]').prop('checked',false);
+                $('input[id$="id_channelgroup_R_fixed"]').prop('disabled',false);
+                $('input[id$="id_channelgroup_budget"]').prop('disabled',true);
+                $('input[id$="checbox_splits_budget"]').prop('disabled',true);
+                $('input[id$="checbox_splits_r"]').prop('disabled',false);
+                $('input[id$="checbox_splits_budget"]').prop('checked',false)
+                $('input[id$="checbox_splits_r"]').prop('checked',false)
+                $('input[name$="channel_split_views"]').each(function (index, value) {
+                          $(this).prop('disabled', true)})
+                $('input[name$="channel_split_budget"]').each(function (index, value) {
+                              $(this).prop('disabled', true)})
+             })
+
+            $('input[name$="max_r"]').change(function () {
+                $('input[name$="channel_split_views"]').each(function (index, value) {
+                          $(this).prop('disabled', true)})
+                $('input[name$="channel_split_budget"]').each(function (index, value) {
+                              $(this).prop('disabled', true)})
+                $('input[name$="min_budget"]').prop('checked',false);
+                $('input[id$="id_channelgroup_R_fixed"]').prop('disabled',true);
+                $('input[id$="id_channelgroup_budget"]').prop('disabled',false);
+                $('input[id$="checbox_splits_budget"]').prop('disabled',false);
+                $('input[id$="checbox_splits_r"]').prop('disabled',true);
+                $('input[id$="checbox_splits_r"]').prop('checked',false)
+                $('input[id$="checbox_splits_budget"]').prop('checked',false)
+             })
+
+            $('input[name$="channel_split_views"]').change(function () {
+                var $changed_show = $(this);
+                // channel_id=this.id
+                // element_name="Split_budget:"+ channel_id
+
+                $('input[name$="channel_split_budget"]').each(function (index, value) {
+                    $(this).val("")
+                })
+            })
+
+            $('input[name$="channel_split_budget"]').change(function () {
+                $('input[name$="channel_split_views"]').each(function (index, value) {
+                    $(this).val("")
+                })
+            })
+
+            $('input[name$="channel_fixed_budget"]').change(function () {
+                channel_id = this.name.split('-',2)
+                element_name = channel_id[0]+"-channel_fixed_show"
+                $('input[name="' + element_name + '"]').val("")
+            })
+
+            $('input[name$="channel_fixed_show"]').change(function () {
+                channel_id = this.name.split('-',2)
+                element_name = channel_id[0]+"-channel_fixed_budget"
+                $('input[name="' + element_name + '"]').val("")
+            })
+
+            $('input[name$="channel_show_limit_min"]').change(function () {
+                channel_id = this.name.split('-',2)
+                element_name = channel_id[0]+"-channel_budget_limit_min"
+                $('input[name="' + element_name + '"]').val("")
+                element_name = channel_id[0]+"-channel_budget_limit_max"
+                $('input[name="' + element_name + '"]').val("")
+            })
+
+            $('input[name$="channel_show_limit_max"]').change(function () {
+                channel_id = this.name.split('-',2)
+                element_name = channel_id[0]+"-channel_budget_limit_min"
+                $('input[name="' + element_name + '"]').val("")
+                element_name = channel_id[0]+"-channel_budget_limit_max"
+                $('input[name="' + element_name + '"]').val("")
+            })
+
+            $('input[name$="channel_budget_limit_min"]').change(function () {
+                channel_id = this.name.split('-',2)
+                element_name = channel_id[0]+"-channel_show_limit_min"
+                $('input[name="' + element_name + '"]').val("")
+                element_name = channel_id[0]+"-channel_show_limit_max"
+                $('input[name="' + element_name + '"]').val("")
+            })
+
+            $('input[name$="channel_budget_limit_max"]').change(function () {
+                channel_id = this.name.split('-',2)
+                element_name = channel_id[0]+"-channel_show_limit_min"
+                $('input[name="' + element_name + '"]').val("")
+                element_name = channel_id[0]+"-channel_show_limit_max"
+                $('input[name="' + element_name + '"]').val("")
+            })
+
+        });
+
+
+    </script>
+
+
+    <form method="post">
+        {% load staticfiles %}
+        <p></p>
+        <label class="pageelem"><h2>Имя группы: {{ group.channelgroup_name }}</h2></label>
+        <br>
+        <label class="pageelem">Выбранная TA: {{ group.channelgroup_TA.TA_name }}</label>
+        <br>
+        <label class="pageelem">Общий размер выбранной ТА: {{ group.channelgroup_TA.TA_Size }}</label>
+        <br>
+            </div>
+
+        <table class="pageelem">
+            <tr>
+                <td></td>
+                <td><label></label><label class="pageelem" >Глобальный охват:</label></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><label>	&#160;	&#160;	&#160;	&#160;	&#160;</label><label class="pageelem">Общий бюджет:</label></td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td><input type="radio" checked id="min_budget" name="min_budget"/> <label for="min_budget">Найти минимальный бюджет</label></td>
+                <td><label>{{ groupform.channelgroup_R_fixed }}</label></td>
+                <td></td>
+                <td></td>
+                <td><input type="radio" id="max_r" class="pageelem" name="max_r"/> <label class="pageelem" for="max_r">Найти максимальный охват </label></td>
+                <td><label class="pageelem">{{ groupform.channelgroup_budget}}</label></td>
+
+                <td><label class="pageelem_80" for="checbox_splits_r">Учитывать сплиты&#160;	&#160;</label> </td>
+                <td><input class="pageelem_80_ch" type="checkbox" id="checbox_splits" /></td>
+
+            </tr>
+
+        </table>
+        <p></p>
+
+        <p><button class="cool_button" type="submit" onclick="get_task()">Рассчитать</button> </p>
+
+        <img id="loadImg" src="{% static "icons\ajax-loader.gif" %}" />
+
+        {% if result %}
+            {% if not result.error %}
+                <div class="alert alert-success" role="alert">
+                    <strong class="pageelem">Рекомендуемые настройки при заданных параметрах:</strong><br>
+                {% if result.task == 1 %}
+                    <label class="pageelem">Максимальный охват: {{ result.r }}</label><br>
+                    <label class="pageelem">Сплит по бюджету: {{ result.budget_split }}</label><br>
+                    <label class="pageelem">Сплит по показам: {{ result.views_split }}</label><br>
+                    <label class="pageelem">Охват в процентах: {{ result.r_perc }}</label><br>
+                    <label class="pageelem">Охват в людях: {{ result.r_people }} тыс. человек </label><br>
+                    <br>
+                    </div>
+                {% endif %}
+                {% if result.task == 2 %}
+                    <label class="pageelem">Охват на частоту: {{ result.r }}</label><br>
+                    <label class="pageelem">Общий бюджет: {{ result.budget }}</label><br>
+                    <label class="pageelem">Сплит по бюджету: {{ result.budget_split }}</label><br>
+                    <label class="pageelem">Сплит по показам: {{ result.views_split }}</label><br>
+                    <label class="pageelem">Охват в процентах: {{ result.r_perc }}</label><br>
+                    <label class="pageelem">Охват в людях: {{ result.r_people }} тыс. человек </label><br>
+                    <br>
+                    </div>
+                {% endif %}
+                {% if result.task == 3 %}
+                    <label class="pageelem">Минимальный бюджет: {{ result.min_budget }}</label><br>
+                    <label class="pageelem">Сплит по бюджету: {{ result.budget_split }}</label><br>
+                    <label class="pageelem">Сплит по показам: {{ result.views_split }}</label><br>
+                    <label class="pageelem">Охват в процентах: {{ result.r_perc }}</label><br>
+                    <label class="pageelem">Охват в людях: {{ result.r_people }} тыс. человек </label><br>
+                    <br>
+                    </div>
+                {% endif %}
+                {% if result.task == 4 %}
+                    <label class="pageelem">Минимальный бюджет: {{ result.min_budget }}</label><br>
+                    <label class="pageelem">Сплит по бюджету: {{ result.budget_split }}</label><br>
+                    <label class="pageelem">Сплит по показам: {{ result.views_split }}</label><br>
+                    <label class="pageelem">Охват в процентах: {{ result.r_perc }}</label><br>
+                    <label class="pageelem">Охват в людях: {{ result.r_people }} тыс. человек </label><br>
+                    <br>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div></div>
+
+                {% if result.error == "sorry, can't find answer with this params" %}
+
+                <br><div class="alert alert-warning" role="alert">
+                <br> <strong class="pageelem">Рассчет невозможен.</strong>
+                <p><label class="pageelem">Ошибка: {{ result.error }}</label></p>
+                </div>
+
+                    {% else %}
+
+                <br><div class="alert alert-danger" role="alert">
+                <br> <strong class="pageelem">Рассчет невозможен.</strong>
+                <p><label class="pageelem">Ошибка: {{ result.error }}</label></p>
+                </div>
+
+                {% endif %}
+
+
+
+            {% endif %}
+
+        {% endif %}
+
+
+
+        {% if errors %}
+            <div class="alert alert-danger" role="alert"><strong class="pageelem">Невозможно сохранить данные из-за следующих ошибок:</strong>
+            {% for error in errors %}
+                <p class="pageelem">{{ error }}</p>
+            {% endfor %}
+            </div>
+
+        {% endif %}
+
+        <ul class="result"></ul>
+        <table border="2" class="pageelem">
+            <tr>
+                <td>Имя канала:</td>
+                <td width="50">Сплит в показах:</td>
+                <td width="50">Сплит в бюджете:</td>
+                <td width="50">Изначальный CPM:</td>
+                <td width="50">Ввести CPM:</td>
+                <td align="center" >TA_Z</td>
+                <td align="center" >TA_P</td>
+                <td align="center">TA_L</td>
+                <td>Охват канала:</td>
+                <td width="140">Фиксированные показы</td>
+                <td width="140">Фиксированный бюджет</td>
+                <td width="140">Минимальные показы</td>
+                <td width="140">Максимальные показы</td>
+                <td width="140">Минимальный бюджет</td>
+                <td width="140">Максимальный бюджет</td>
+            </tr>
+
+            {% for form,Ta,channel_name,id in channels_forms %}
+                <tr>
+
+            <td>{{ channel_name }}</td>
+
+            <td>{{ form.channel_split_views }}</td>
+
+
+             <td>{{ form.channel_split_budget }}</td>
+
+            <td><label id="{{id}}+TA">{{ Ta.default_CPM }}</label></td>
+            <td>{{ form.user_CPM }}</td>
+
+            <td align="center">{{ Ta.TA_CBU_Z }}</td>
+            <td align="center">{{ Ta.TA_CBU_P }}</td>
+            <td align="center">{{ Ta.TA_CBU_L }}</td>
+            <td align="center">{{ Ta.Channel_TA_R }}</td>
+
+            <td>{{ form.channel_fixed_show }}</td>
+            <td>{{ form.channel_fixed_budget }}</td>
+
+            <td>{{ form.channel_show_limit_min }}</td>
+            <td>{{ form.channel_show_limit_max }}</td>
+
+            <td>{{ form.channel_budget_limit_min }}</td>
+            <td>{{ form.channel_budget_limit_max }}</td>
+            </tr>
+        {% endfor %}
+
+
+
+         </table>
+
+
+        <input name="choice" hidden value="">
+        {% csrf_token %}
+        <script>
+            function get_task() {
+                if(($('input[id$="min_budget"]').prop("checked")==true)&&($('input[id$="checbox_splits"]').prop("checked")==false)){
+                 $('input[name="choice"]').val("task3")
+                }
+                if(($('input[id$="min_budget"]').prop("checked")==true)&&($('input[id$="checbox_splits"]').prop("checked")==true)){
+                 $('input[name="choice"]').val("task4")
+                }
+                if(($('input[id$="max_r"]').prop("checked")==true)&&($('input[id$="checbox_splits"]').prop("checked")==false)){
+                 $('input[name="choice"]').val("task1")
+                }
+                if(($('input[id$="max_r"]').prop("checked")==true)&&($('input[id$="checbox_splits"]').prop("checked")==true)){
+                 $('input[name="choice"]').val("task2")
+                }
+            }
+        </script>
+
+    <br>
+    <br>
+    <p><button class="cool_button" onclick='location="/My_groups"' type="button">Назад</button></p>
+    </form>
+
+{% endblock %}

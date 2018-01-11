@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main page</title>
+</head>
+<body>
+
+
+{% load staticfiles %}
+<script src="{% static "jquery-3.2.1.min.js" %}"></script>
+<script src="{% static "bootstrap.min.js" %}"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<link href="http://bootstrap.imazin.ru/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/4.0.0-beta.2/spacelab/bootstrap.min.css" rel="stylesheet">
+
+   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="/">Home</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="true" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+       <style>
+    body {background: #fcfffa
+    }
+        </style>
+
+  <div class="navbar-collapse collapse show" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/Channels">Channels</a>
+      </li>
+    {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="/My_groups">My groups</a>
+      {% if  user.is_superuser %}
+
+            <li class="nav-item">
+                <a class="nav-link" href="/admin">Administration</a>
+            </li>
+      {% endif %}
+    {% endif %}
+
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+
+         {% if user.is_authenticated %}
+            <label class="form-control mr-sm-2">Hello {{user.username}}</label>
+             <a class="form-inline my-2 my-lg-0" href="/logout">Logout</a>
+        {% else %}
+             <a class="form-inline my-2 my-lg-0" href="/login">Login</a>
+             <label>&#160; &#160; </label>
+             <a class="form-inline my-2 my-lg-0" href="/register">Register</a>
+        {% endif %}
+    </form>
+  </div>
+</nav>
+
+<!---
+% block show_all_channels %}% endblock %}
+--->
+{% block register %}{% endblock %}
+{% block login %}{% endblock %}
+{% block TA_choose %} {% endblock %}
+{% block show_group %}{% endblock %}
+{% block show_groups %}{% endblock %}
+{% block DeleteGroup %}{% endblock %}
+
+</body>
+</html>

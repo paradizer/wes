@@ -1,0 +1,109 @@
+{% extends 'MainPage.html' %}
+
+{% block DeleteGroup %}
+
+    <style type="text/css">
+
+    .cool_button {
+              text-decoration: none;
+              outline: none;
+              display: inline-block;
+              padding: 10px 30px;
+              margin: 10px 20px;
+              position: relative;
+              overflow: hidden;
+              left: 20px;
+              border: 2px solid #96cbfe;
+              border-radius: 8px;
+              font-family: 'Montserrat', sans-serif;
+              color: #656b6a;
+              transition: .2s ease-in-out;
+        }
+        .cool_button:before {
+              content: "";
+              background: linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.5));
+              height: 50px;
+              width: 50px;
+              position: absolute;
+              top: -8px;
+              left: -75px;
+              transform: skewX(-45deg);
+        }
+        .cool_button:hover {
+              background-color: #6ab4fe;
+              color: #fff;
+        }
+        .cool_button:hover:before {
+              left: 150px;
+              transition: .5s ease-in-out;
+        }
+	.pageelem {
+        position: relative;
+        left: 40px;
+        up:40px;
+	}
+
+    .Chan_label{
+        position: relative;
+        left: 40px;
+    }
+
+    h4{
+        position: relative;
+        left: 40px;
+    }
+
+    select{
+        position: relative;
+        left: 40px;
+    }
+
+</style>
+
+<form method="POST">
+    <label class="pageelem">Имя группы: {{ group.channelgroup_name }}</label>
+    <br>
+    <label class="pageelem">Имя выбранной ТА: {{ group.channelgroup_TA.TA_name }}</label>
+    <br>
+    <label class="pageelem">Общий размер выбранной ТА: {{ group.channelgroup_TA.TA_Size }}</label>
+    <br>
+
+    {% for channel in channels%}
+        <br>
+        Имя канала: {{ channel.channel_name }}
+        <br>
+        <br>
+            {% for Ta in Tas %}
+                {% if Ta.channel_id == channel.channel_id %}
+                    <label class="pageelem">Default_CPM:</label>
+                    <label class="pageelem">{{ Ta.default_CPM }}</label>
+                    <br>
+                    <label class="pageelem"> TA_CBU_Z: </label>
+                    <label class="pageelem">{{ Ta.TA_CBU_Z }}</label>
+                    <br>
+                    <label class="pageelem">TA_CBU_P: </label>
+                    <label class="pageelem">{{ Ta.TA_CBU_P }}</label>
+                     <br>
+                    <label class="pageelem">TA_CBU_L: </label>
+                    <label class="pageelem">{{ Ta.TA_CBU_L }}</label>
+                    <br>
+                    <label class="pageelem">{{ Ta.Channel_TA_R }}</label>
+                {% endif %}
+            {% endfor %}
+        <br>
+    {% endfor %}
+
+    {% csrf_token %}
+    <br>
+    <br>
+    <h2  class="pageelem">Вы уверены что хотите удалить данную группу?</h2>
+<input type="hidden" name="groupid" value="{{ group.channelgroup_id}}">
+<button  class="cool_button" type="submit">Да</button><button type="button"  class="cool_button" onclick="location.href = '/My_groups'">Отмена</button>
+<br>
+<br>
+<br>
+<br>
+</form>
+
+
+{% endblock %}

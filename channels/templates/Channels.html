@@ -1,0 +1,183 @@
+{% extends 'MainPage.html' %}
+
+
+
+{% block TA_choose %}
+<form action="create_group/" method="post">{% csrf_token %}
+<style type="text/css">
+
+	.pageelem {
+        position: relative;
+        left: 40px;
+        up:40px;
+	}
+
+    .input_page{
+        position: relative;
+        left: 40px;
+    }
+
+    .Chan_label{
+        position: relative;
+        left: 40px;
+    }
+
+    h4{
+        position: relative;
+        left: 40px;
+    }
+
+    select_page{
+        position: relative;
+        left: 40px;
+    }
+
+</style>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+         $(document).submit(function () {
+
+             if ($('input[name="GroupName"]').val() == "") {
+                 alert("Укажите имя группы"); //new value
+                 return false;
+             }
+
+             checkboxflag=false
+             $('input[class="checbox_data"]').each(function(i,elem) {
+                if ($(this).prop("checked")==true) {
+                     checkboxflag=true
+                }
+            });
+
+             if  (checkboxflag==false){
+                 alert("Не выбран ни один канал")
+                 return false;
+             }
+
+         });
+
+        $('select[name="select_template"]').change(function () {
+            ta_id=$('select[name="select_template"]').val()
+            $.get("return_channels_onta/?ta_id="+ta_id, function(data) {
+                var data2=data["channels"]
+
+
+                html="<table> <tr> " +
+                        "<td>Добавить канал в группу</td>" +
+                        "<td>Имя канала</td>" +
+                        "<td>Охват в процентах:</td>" +
+                        "<td>Охват в людях:</td>" +
+                        "<td>Цена за 1000 показов:</td>" +
+                        "<td></td>" +
+                        "</tr>"
+
+                data2.forEach(function(entry) {
+
+
+                 var addings=""
+                {% if  user.is_authenticated %}
+                addings="<input class='checbox_data' style='position: relative;left: 60px' type='checkbox' name=chan"+entry["channel_id"]+"/>"
+                {% endif %}
+
+                    html=html+"<tr>" +
+                        "<td>"+addings+"</td>" +
+                        "<td>"+entry["channel_name"]+"</td>" +
+                        "<td>"+entry["channel_r"]+"</td>" +
+                        "<td>"+entry["channel_auditory"]+"</td>" +
+                        "<td>"+entry["channel_cpm"]+"</td>" +
+                        "<td></td>" +
+                        "</tr>"
+
+                })
+
+                html=html+"</table>"
+
+                $('ul[class="result"]').html(html);});
+
+        });
+    });
+
+    </script>
+
+
+<p class="pageelem">Выберите TA :</p>
+
+<select class="pageelem" name="select_template" size="1">
+                                {% for ta in TA %}
+                                        <option value={{ ta.TA_id }}>{{ ta.TA_name }} Размер ТА: {{ ta.TA_Size }}</option>
+                                {% endfor %}
+                            </select>
+
+    <h4>Каналы соответствующие выбранной Целевой Аудитории</h4>
+
+<ul class="result"></ul>
+
+{% if user.is_authenticated %}
+        <label class="Chan_label">Укажите название группы</label> <br>
+        <input type="text" class="input_page" name="GroupName">
+        <input type="submit" class="input_page" value="Создать группу">
+{% endif %}
+
+
+<script>
+    ta_id=$('select[name="select_template"]').val()
+            $.get("return_channels_onta/?ta_id="+ta_id, function(data) {
+                var data2=data["channels"]
+
+                {% if  user.is_authenticated %}
+                html="<table style='font-size: 110%'> <tr>" +
+                        "<td></td>" +
+                        "<td>Имя канала</td>" +
+                        "<td>Охват в процентах:</td>" +
+                        "<td>Охват в людях:</td>" +
+                        "<td>Цена за 1000 показов:</td>" +
+                        "<td></td>" +
+                        "</tr>"
+                {% else %}
+                    html="<table> <tr>" +
+                        "<td>Имя канала</td>" +
+                        "<td>Охват в процентах:</td>" +
+                        "<td>Охват в людях:</td>" +
+                        "<td>Цена за 1000 показов:</td>" +
+                        "<td></td>" +
+                        "</tr>"
+                {% endif %}
+
+                data2.forEach(function(entry) {
+
+                {% if  user.is_authenticated %}
+                    html=html+"<tr>" +
+                        "<td  width='70' align='left'><input class='checbox_data' type='checkbox' name=chan"+entry["channel_id"]+"/></td>"+
+                        "<td width='160'>"+entry["channel_name"]+"</td>" +
+                        "<td width='150'>"+entry["channel_r"]+"</td>" +
+                        "<td width='200'>"+entry["channel_auditory"]+"</td>" +
+                        "<td width='200'>"+entry["channel_cpm"]+"</td>" +
+                        "<td></td>" +
+                        "</tr>"
+                    {% else %}
+                        html=html+"<tr>" +
+                        "<td>"+entry["channel_name"]+"</td>" +
+                        "<td>"+entry["channel_r"]+"</td>" +
+                        "<td>"+entry["channel_auditory"]+"</td>" +
+                        "<td>"+entry["channel_cpm"]+"</td>" +
+                        "<td></td>" +
+                        "</tr>"
+                    {% endif %}
+
+                })
+
+                html=html+"</table>"
+
+                $('ul[class="result"]').html(html);});
+</script>
+    </form>
+
+
+
+{% endblock %}
+
+

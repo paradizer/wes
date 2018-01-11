@@ -1,0 +1,59 @@
+{% extends 'MainPage.html' %}
+
+{% block show_groups %}
+<style type="text/css">
+
+	.pageelem {
+        position: relative;
+        left: 40px;
+        top:40px;
+	}
+
+    </style>
+
+
+    {% load staticfiles %}
+
+    <table class="pageelem">
+            <tr>
+                <td>Имя группы</td>
+                <td>Выбранная TA</td>
+                <td>Размер ТА (чел) </td>
+                <td>Каналы входящие в группу</td>
+                <td></td>
+            </tr>
+
+    {% for group in groups %}
+
+
+
+            <tr>
+                <td width="200px"><a href="/showgroup/?Group_id={{ group.channelgroup_id }}"> {{ group.channelgroup_name }}</a> </td>
+                <td width="200px">{{ group.channelgroup_TA.TA_name }}</td>
+                <td width="200px">{{ group.channelgroup_TA.TA_Size }}</td>
+                <td width="200px"> <div id="{{ group.channelgroup_id }}"> </div></td>
+                <td width="200px" align="center"><a href="/DeleteGroup/?Group_id={{ group.channelgroup_id }}"><img src="{% static 'icons/Delete.png' %}"/></a></td>
+            </tr>
+
+            <tr style="line-height: 2em">
+                <td></td>
+            </tr>
+
+         <script type="text/javascript">
+         $.ajax({
+            type: "GET",
+            url: "/showchannel_ingroup",
+            data:{'group_id':{{ group.channelgroup_id}}},
+            dataType: "html",
+            cache: false,
+            success: function(data){
+                $("#{{ group.channelgroup_id }}").html(data);
+            }
+       });
+         </script>
+
+    {% endfor %}
+    </table>
+    {% block test %}{% endblock %}
+
+{% endblock %}
