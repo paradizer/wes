@@ -196,10 +196,8 @@ def task4(group_id=1):
                             budget_list_min = budget_list_var
                 if sum(budget_list_max) < sum(budget_list_min):
                         return {'error': 'min budget for channels {} more than max budget for channels {}'.format(sum(budget_list_min), sum(budget_list_max))}
-
                 r_fixed = channels_in_group_list[0].group.channelgroup_R_fixed
                 #try to find min budget in 1000 steps
-                STEPS = 1000
                 # for i in range(int(budget_list_min[0]), int(budget_list_max[0])+1, int((budget_list_max[0] - budget_list_min[0]) / STEPS)):
                 for i in range(int(budget_list_min[0]), int(budget_list_max[0]) + 1, 1):
                     budget_list_cur = [i / budget_split[0] * ch_budget_p for ch_budget_p
