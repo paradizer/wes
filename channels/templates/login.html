@@ -1,57 +1,17 @@
 {% extends 'MainPage.html' %}
 
 {% block login %}
-    <style>
-    .cool_button {
-              text-decoration: none;
-              outline: none;
-              display: inline-block;
-              padding: 10px 30px;
-              margin: 10px 20px;
-              position: relative;
-              left: -20px;
-              overflow: hidden;
-              border: 2px solid #96cbfe;
-              border-radius: 8px;
-              font-family: 'Montserrat', sans-serif;
-              color: #656b6a;
-              transition: .2s ease-in-out;
-        }
-        .cool_button:before {
-              content: "";
-              background: linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.5));
-              height: 50px;
-              width: 50px;
-              position: absolute;
-              top: -8px;
-              left: -75px;
-              transform: skewX(-45deg);
-        }
-        .cool_button:hover {
-              background-color: #6ab4fe;
-              color: #fff;
-        }
-        .cool_button:hover:before {
-              left: 150px;
-              transition: .5s ease-in-out;
-        }
-
-    </style>
 
     <div class="centered"  style="margin-left:auto;margin-right:auto;width:800px;">
     <form action="" method="post">
-        <style>
-    body {background: #d2ecff
-    }
-</style>
 
         <br>
         <br>
       {% csrf_token %}
       <!-- as_p для того, чтобы каждый элемент формы был с новой строки -->
       {{ form.as_p }}
-      <button class="cool_button" type="submit">Войти</button>
-         <button class="cool_button" onclick=func()>Создать аккаунт</button>
+      <button class="cool_button" style="left: -20px;" type="submit">Войти</button>
+         <button class="cool_button" style="left: -20px;" onclick=func()>Создать аккаунт</button>
     </form>
  </div>
 

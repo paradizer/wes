@@ -1,0 +1,93 @@
+    .pageelem {
+        position: relative;
+        left: 40px;
+        up:40px;
+	}
+
+    .input_page{
+        position: relative;
+        left: 40px;
+    }
+
+    .Chan_label{
+        position: relative;
+        left: 40px;
+    }
+
+    h4{
+        position: relative;
+        left: 40px;
+    }
+    body {background: #fcfffa
+    }
+    .cool_button {
+              text-decoration: none;
+              outline: none;
+              display: inline-block;
+              padding: 10px 30px;
+              margin: 10px 20px;
+              position: relative;
+              overflow: hidden;
+              left: 20px;
+              border: 2px solid #96cbfe;
+              border-radius: 8px;
+              font-family: 'Montserrat', sans-serif;
+              color: #656b6a;
+              transition: .2s ease-in-out;
+        }
+        .cool_button:before {
+              content: "";
+              background: linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.5));
+              height: 50px;
+              width: 50px;
+              position: absolute;
+              top: -8px;
+              left: -75px;
+              transform: skewX(-45deg);
+        }
+        .cool_button:hover {
+              background-color: #6ab4fe;
+              color: #fff;
+        }
+        .cool_button:hover:before {
+              left: 150px;
+              transition: .5s ease-in-out;
+        }
+
+    select{
+            position: relative;
+            left: 40px;
+        }
+    #loadImg{position:fixed; z-index:1000;  display:none;
+            align-items: center;
+            justify-content: center;}
+    .top_label {
+        display: block;
+        }
+        .input-wrapper {
+            display: inline-block;
+            position: relative;
+        }
+       .input-wrapper:hover:after {
+           content: attr(data-title);
+           position: absolute;
+           left: 90%;
+           top: 50%;
+           z-index: 1;
+           background: #ffffcc;
+           font-size: 11px;
+           padding: 5px 10px;
+           border: 1px solid #000;
+           box-shadow: 5px 5px 8px 0px rgba(119, 119, 119, 0.64);
+           -moz-box-shadow: 5px 5px 8px 0px rgba(119, 119, 119, 0.64);
+           -webkit-box-shadow: 5px 5px 8px 0px rgba(119, 119, 119, 0.64);
+       }
+    .pageelem_80 {
+        position: relative;
+        left: 80px;
+    }
+    .pageelem_80_ch {
+        position: relative;
+        left: 80px;
+        top: -2px;
+    }
