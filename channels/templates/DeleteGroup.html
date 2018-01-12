@@ -2,64 +2,6 @@
 
 {% block DeleteGroup %}
 
-    <style type="text/css">
-
-    .cool_button {
-              text-decoration: none;
-              outline: none;
-              display: inline-block;
-              padding: 10px 30px;
-              margin: 10px 20px;
-              position: relative;
-              overflow: hidden;
-              left: 20px;
-              border: 2px solid #96cbfe;
-              border-radius: 8px;
-              font-family: 'Montserrat', sans-serif;
-              color: #656b6a;
-              transition: .2s ease-in-out;
-        }
-        .cool_button:before {
-              content: "";
-              background: linear-gradient(90deg, rgba(255,255,255,.1), rgba(255,255,255,.5));
-              height: 50px;
-              width: 50px;
-              position: absolute;
-              top: -8px;
-              left: -75px;
-              transform: skewX(-45deg);
-        }
-        .cool_button:hover {
-              background-color: #6ab4fe;
-              color: #fff;
-        }
-        .cool_button:hover:before {
-              left: 150px;
-              transition: .5s ease-in-out;
-        }
-	.pageelem {
-        position: relative;
-        left: 40px;
-        up:40px;
-	}
-
-    .Chan_label{
-        position: relative;
-        left: 40px;
-    }
-
-    h4{
-        position: relative;
-        left: 40px;
-    }
-
-    select{
-        position: relative;
-        left: 40px;
-    }
-
-</style>
-
 <form method="POST">
     <label class="pageelem">Имя группы: {{ group.channelgroup_name }}</label>
     <br>

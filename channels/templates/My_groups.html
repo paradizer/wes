@@ -1,27 +1,21 @@
 {% extends 'MainPage.html' %}
 
 {% block show_groups %}
-<style type="text/css">
 
-	.pageelem {
-        position: relative;
-        left: 40px;
-        top:40px;
-	}
-
-    </style>
 
 
     {% load staticfiles %}
 
-    <table class="pageelem">
+    <table class="table">
+        <thead class="thead-inverse">
             <tr>
-                <td>Имя группы</td>
-                <td>Выбранная TA</td>
-                <td>Размер ТА (чел) </td>
-                <td>Каналы входящие в группу</td>
-                <td></td>
+                <th>Имя группы</th>
+                <th>Выбранная TA</th>
+                <th>Размер ТА (чел) </th>
+                <th>Каналы входящие в группу</th>
+                <th></th>
             </tr>
+        </thead>
 
     {% for group in groups %}
 
