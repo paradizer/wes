@@ -659,24 +659,27 @@
 
         <ul class="result"></ul>
 
-        <table border="2" class="pageelem">
+        <div class="table-responsive">
+        <table border="2" class="pageelem table table-bordered table-hover">
+        <thead>
             <tr>
-                <td>Имя канала:</td>
-                <td width="50">Сплит в показах:</td>
-                <td width="50">Сплит в бюджете:</td>
-                <td width="50">Изначальный CPM:</td>
-                <td width="50">Ввести CPM:</td>
-                <td align="center" >TA_Z</td>
-                <td align="center" >TA_P</td>
-                <td align="center">TA_L</td>
-                <td>Охват канала:</td>
-                <td width="140">Фиксированные показы</td>
-                <td width="140">Фиксированный бюджет</td>
-                <td width="140">Минимальные показы</td>
-                <td width="140">Максимальные показы</td>
-                <td width="140">Минимальный бюджет</td>
-                <td width="140">Максимальный бюджет</td>
+                <th>Имя канала:</th>
+                <th width="50">Сплит в показах:</th>
+                <th width="50">Сплит в бюджете:</th>
+                <th width="50">Изначальный CPM:</th>
+                <th width="50">Ввести CPM:</th>
+                <th align="center" >TA_Z</th>
+                <th align="center" >TA_P</th>
+                <th align="center">TA_L</th>
+                <th>Охват канала:</th>
+                <th width="140">Фиксированные показы</th>
+                <th width="140">Фиксированный бюджет</th>
+                <th width="140">Минимальные показы</th>
+                <th width="140">Максимальные показы</th>
+                <th width="140">Минимальный бюджет</th>
+                <th width="140">Максимальный бюджет</th>
             </tr>
+        </thead>
             {% for form,Ta,channel_name,id in channels_forms %}
                 <tr>
 
@@ -708,7 +711,7 @@
 
 
 
-         </table>
+        </table></div>
 
 
         <input name="choice" hidden value="">
@@ -730,8 +733,6 @@
             }
         </script>
 
-    <br>
-    <br>
     <p><button class="cool_button" onclick='location="/My_groups"' type="button">Назад</button></p>
     </form>
 
