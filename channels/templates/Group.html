@@ -538,6 +538,7 @@
 
 
     <form method="post">
+
         {% load staticfiles %}
         <p></p>
         <label class="pageelem"><h2>Имя группы: {{ group.channelgroup_name }}</h2></label>
@@ -659,7 +660,8 @@
 
         <ul class="result"></ul>
 
-        <div class="table-responsive">
+        <div class="table-responsive" id="DivTable1">
+
         <table border="2" class="pageelem table table-bordered table-hover">
         <thead>
             <tr>
@@ -680,6 +682,8 @@
                 <th width="140">Максимальный бюджет</th>
             </tr>
         </thead>
+        <tbody></tbody>
+
             {% for form,Ta,channel_name,id in channels_forms %}
                 <tr>
 
@@ -709,10 +713,7 @@
             </tr>
         {% endfor %}
 
-
-
         </table></div>
-
 
         <input name="choice" hidden value="">
         {% csrf_token %}

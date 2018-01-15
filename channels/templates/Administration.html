@@ -1,10 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'MainPage.html' %}
+
+{% block Administration %}
+
+    <style>
+    .div_style {
+    width:800px;
+    margin:0 auto;
+    padding: 10px; /* Поля вокруг текста */
+        border: 2px;
+   }
+    </style>
+
+
+    <form method="POST">
+
+    <div class="div_style" >
+
+<div class="panel-group" id="accordion">
+  <!-- 1 панель -->
+  <div class="panel panel-default">
+    <!-- Заголовок 1 панели -->
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Каналы</a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <!-- Содержимое 1 панели -->
+      <div class="panel-body">
+            <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Имя канала</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+        {% for channel in channels %}
+        <thead >
+        <tr>
+        <th width="120" >{{ channel.channel_name }}</th>
+        <th width="20" ><a href="/">изменить</a></th>
+        <th width="20" ><a  href="/">удалить</a></th>
+        </tr>
+        </thead>
+        {% endfor %}
+            <tr>
+            <td><a href="#myModal_Channel" class="btn btn-primary" data-target="#myModal_Channel" data-toggle="modal">Добавить</a>  </td>
+            </tr>
+            </table>
+            </div>
+      </div>
+    </div>
+   <!-- 2 панель -->
+  <div class="panel panel-default">
+    <!-- Заголовок 2 панели -->
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Целевые аудитории</a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse in">
+      <!-- Содержимое 2 панели -->
+      <div class="panel-body">
+            <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Имя целевой аудитории</th>
+                <th>Размер аудитории</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+        {% for ta in TAs %}
+        <thead >
+        <tr>
+        <th width="180" >{{ ta.TA_name }}</th>
+        <th width="120" >{{ ta.TA_Size }}</th>
+        <th width="20" ><a href="/">изменить</a></th>
+        <th width="20" ><a  href="/">удалить</a></th>
+        </tr>
+        </thead>
+        {% endfor %}
+            <tr>
+            <td>
+            <a data-toggle="modal" href="#AddTA">Добавить целевую Аудиторию</a>
+            </tr>
+            </table>
+            </div>
+
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+
+
+
+<div class="container">
+  <!-- Trigger the modal with a button -->
+      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Add/change AWS alert</button>
+  </p>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">AWS alert</h4>
+        </div>
+        <div class="modal-body">
+            <form action="/modules/aws_alert/" method="POST" class="post-form">{% csrf_token %}
+                <button onclick="submitForms()" type="submit" class="save btn btn-default">Save alert</button>
+            </form>
+        </div>
+          <!---
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        --->
+      </div>
+
+    </div>
+  </div>
+</div>
+
+    </form>
+
+{% endblock %}
+
+
