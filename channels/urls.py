@@ -29,4 +29,6 @@ urlpatterns = [
     url(r'^DeleteGroup/$',views.deleteGroup),
     url(r'^My_groups/$',views.showgroups),
     url(r'^showchannel_ingroup/$',views.showchannel_ingroup),
+    url(r'^administration/$', views.Administration),
+
 ]
