@@ -70,6 +70,9 @@ class LogoutView(View):
 
 # My func
 
+def Administration(request):
+    return render(request,"Administration.html",{'channels': Channel.objects.all(), 'TAs': TA.objects.all()})
+
 def deleteGroup(request):
     if request.method == 'GET':
         try:
