@@ -33,36 +33,52 @@
             $.get("return_channels_onta/?ta_id="+ta_id, function(data) {
                 var data2=data["channels"]
 
+                {% if  user.is_authenticated %}
 
-                html="<table> <tr> " +
-                        "<td>Добавить канал в группу</td>" +
-                        "<td>Имя канала</td>" +
+                html="<div class='table-responsive style='margin-right: auto' id='DivTable1'>"+
+                    "<table class='table table-hover'> <tr> " +
+                        "<td >Добавить канал в группу</td>" +
+                        "<td >Имя канала</td>" +
                         "<td>Охват в процентах:</td>" +
                         "<td>Охват в людях:</td>" +
                         "<td>Цена за 1000 показов:</td>" +
-                        "<td></td>" +
                         "</tr>"
+                    {% else %}
 
+                html="<table  class='table table-hover'> <tr> " +
+                    "<td>Имя канала</td>" +
+                    "<td>Охват в процентах:</td>" +
+                    "<td>Охват в людях:</td>" +
+                    "<td>Цена за 1000 показов:</td>" +
+                    "<td></td>" +
+                    "</tr>"
+
+                {% endif %}
+
+                counter=1
                 data2.forEach(function(entry) {
 
 
                  var addings=""
                 {% if  user.is_authenticated %}
-                addings="<input class='checbox_data' style='position: relative;left: 60px' type='checkbox' name=chan"+entry["channel_id"]+"/>"
+                addings="<input class='checbox_data' type='checkbox' onclick=color_table("+counter+") id="+entry['channel_name']+" class= name=chan"+entry['channel_id']+"/>"
+                     html=html+"<tr id="+counter+">" +
+                        "<td width='70' align='left'>"+addings+"</td>"
+                    {% else %}
+                    html=html+"<tr>"
                 {% endif %}
 
-                    html=html+"<tr>" +
-                        "<td>"+addings+"</td>" +
-                        "<td>"+entry["channel_name"]+"</td>" +
+                    html=html+"<td width='160'><label for="+entry["channel_name"] + ">"+entry["channel_name"]+"</label></td>" +
                         "<td>"+entry["channel_r"]+"</td>" +
                         "<td>"+entry["channel_auditory"]+"</td>" +
                         "<td>"+entry["channel_cpm"]+"</td>" +
-                        "<td></td>" +
                         "</tr>"
 
+                counter=counter+1
                 })
 
-                html=html+"</table>"
+
+                html=html+"</table></div>"
 
                 $('ul[class="result"]').html(html);});
 
@@ -72,67 +88,70 @@
     </script>
 
 
-<p class="pageelem">Выберите TA :</p>
-
-<select class="pageelem" name="select_template" size="1">
+<p><label class="pageelem">Выберите TA :</label>
+<select class="selectpicker pageelem" style="margin-right: auto" data-live-search="true"  name="select_template" size="1">
                                 {% for ta in TA %}
                                         <option value={{ ta.TA_id }}>{{ ta.TA_name }} Размер ТА: {{ ta.TA_Size }}</option>
                                 {% endfor %}
                             </select>
+</div> </p>
+<br>
 
-    <h4>Каналы соответствующие выбранной Целевой Аудитории</h4>
+
+    <label class="pageelem">Каналы соответствующие выбранной Целевой Аудитории</label>
+
 
 <ul class="result"></ul>
 
 {% if user.is_authenticated %}
         <label class="Chan_label">Укажите название группы</label> <br>
-        <input type="text" class="input_page" name="GroupName">
-        <input type="submit" class="input_page" value="Создать группу">
+    <div class="col-xs-2">
+        <input type="text" style="left: 20px" class="input_page form-control" name="GroupName">
+    </div>
+        <input type="submit" class="input_page btn btn-info" value="Создать группу">
 {% endif %}
 
 
 <script>
+    counter=1
     ta_id=$('select[name="select_template"]').val()
             $.get("return_channels_onta/?ta_id="+ta_id, function(data) {
                 var data2=data["channels"]
 
                 {% if  user.is_authenticated %}
-                html="<table style='font-size: 110%'> <tr>" +
+                html="<table class='table table-hover' style='font-size: 110%'> <tr>" +
                         "<td></td>" +
                         "<td>Имя канала</td>" +
                         "<td>Охват в процентах:</td>" +
                         "<td>Охват в людях:</td>" +
                         "<td>Цена за 1000 показов:</td>" +
-                        "<td></td>" +
                         "</tr>"
                 {% else %}
-                    html="<table> <tr>" +
+                    html="<table class='table table-hover' > <tr>" +
                         "<td>Имя канала</td>" +
                         "<td>Охват в процентах:</td>" +
                         "<td>Охват в людях:</td>" +
                         "<td>Цена за 1000 показов:</td>" +
-                        "<td></td>" +
                         "</tr>"
                 {% endif %}
 
                 data2.forEach(function(entry) {
 
                 {% if  user.is_authenticated %}
-                    html=html+"<tr>" +
-                        "<td  width='70' align='left'><input class='checbox_data' type='checkbox' name=chan"+entry["channel_id"]+"/></td>"+
-                        "<td width='160'>"+entry["channel_name"]+"</td>" +
+                    html=html+"<tr id="+counter+">" +
+                        "<td  width='70' align='left'><input class='checbox_data' onclick=color_table("+counter+") type='checkbox' id="+entry['channel_name']+" name=chan"+entry['channel_id']+"/></td>"+
+                        "<td width='160'><label for="+entry["channel_name"] + ">"+entry["channel_name"]+"</label></td>" +
                         "<td width='150'>"+entry["channel_r"]+"</td>" +
                         "<td width='200'>"+entry["channel_auditory"]+"</td>" +
                         "<td width='200'>"+entry["channel_cpm"]+"</td>" +
-                        "<td></td>" +
                         "</tr>"
+                    counter=counter+1
                     {% else %}
                         html=html+"<tr>" +
-                        "<td>"+entry["channel_name"]+"</td>" +
+                        "<td><strong>"+entry["channel_name"]+"</strong></td>" +
                         "<td>"+entry["channel_r"]+"</td>" +
                         "<td>"+entry["channel_auditory"]+"</td>" +
                         "<td>"+entry["channel_cpm"]+"</td>" +
-                        "<td></td>" +
                         "</tr>"
                     {% endif %}
 
@@ -142,6 +161,14 @@
 
                 $('ul[class="result"]').html(html);});
 </script>
+
+<script>
+    function color_table(counter) {
+        $('tr[id='+counter+']').toggleClass("success")
+    }
+
+</script>
+
     </form>
 
 

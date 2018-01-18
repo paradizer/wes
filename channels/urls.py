@@ -30,5 +30,8 @@ urlpatterns = [
     url(r'^My_groups/$',views.showgroups),
     url(r'^showchannel_ingroup/$',views.showchannel_ingroup),
     url(r'^administration/$', views.Administration),
+    url(r'^return_TA',views.return_TA),
+    url(r'^return_channel',views.return_Channel),
+    url(r'^return_ta_in_channels',views.return_ta_in_channels),
 
 ]

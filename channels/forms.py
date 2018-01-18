@@ -1,5 +1,5 @@
 from django import forms
-from .models import ChannelGroup,Channels_in_group,Channel
+from .models import ChannelGroup,Channels_in_group,Channel,TA,TA_in_channel
 from django.forms import ModelForm
 
 class ChannelGroupForm(ModelForm):
@@ -27,3 +27,18 @@ class Channels_in_groupForm(ModelForm):
             'user_CPM': forms.TextInput(attrs={"style": 'width: 120px'}),
         }
 
+class ChannelForm(ModelForm):
+    class Meta:
+        model=Channel
+        fields=['channel_name']
+
+class TAForm(ModelForm):
+    class Meta:
+        model=TA
+        fields=['TA_name','TA_Size']
+
+
+class TA_in_channelForm(ModelForm):
+    class Meta:
+        model=TA_in_channel
+        fields=['default_CPM','TA_CBU_Z','TA_CBU_P','TA_CBU_L','Channel_TA_R','TA','channel']

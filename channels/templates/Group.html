@@ -565,10 +565,10 @@
                 <td><input type="radio" checked id="min_budget" name="min_budget"/> <label for="min_budget">Найти минимальный бюджет</label></td>
                 <td><label>{{ groupform.channelgroup_R_fixed }}</label></td>
                 <td></td>
-                <td></td>
+                <td width="15px"></td>
                 <td><input type="radio" id="max_r" class="pageelem" name="max_r"/> <label class="pageelem" for="max_r">Найти максимальный охват </label></td>
                 <td><label class="pageelem">{{ groupform.channelgroup_budget}}</label></td>
-
+                <td width="15px"></td>
                 <td><label class="pageelem_80" for="checbox_splits_r">Учитывать сплиты&#160;	&#160;</label> </td>
                 <td><input class="pageelem_80_ch" type="checkbox" id="checbox_splits" /></td>
 
@@ -577,7 +577,8 @@
         </table>
         <p></p>
 
-        <p><button class="cool_button" type="submit" onclick="get_task()">Рассчитать</button> </p>
+        <p><button class="btn btn-success pageelem" type="submit" onclick="get_task()">Рассчитать</button> </p>
+        <br>
 
         <img id="loadImg" src="{% static "icons\ajax-loader.gif" %}" />
 
@@ -662,7 +663,7 @@
 
         <div class="table-responsive" id="DivTable1">
 
-        <table border="2" class="pageelem table table-bordered table-hover">
+        <table class="pageelem table table-hover">
         <thead>
             <tr>
                 <th>Имя канала:</th>
@@ -733,8 +734,8 @@
                 }
             }
         </script>
-
-    <p><button class="cool_button" onclick='location="/My_groups"' type="button">Назад</button></p>
+    <br>
+    <p><button class="btn btn-secondary pageelem" onclick='location="/My_groups"' type="button">Назад</button></p>
     </form>
 
 {% endblock %}

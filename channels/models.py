@@ -13,7 +13,7 @@ class TA(models.Model):
         ])
 
     def __str__(self):
-        return (self.TA_name + " Size: " + str(self.TA_Size))
+        return (self.TA_name )
 
 
 class ChannelGroup(models.Model):

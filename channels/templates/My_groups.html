@@ -5,8 +5,8 @@
 
 
     {% load staticfiles %}
-
-    <table class="table">
+<div class="table-responsive" id="DivTable1">
+    <table class="table pageelem">
         <thead class="thead-inverse">
             <tr>
                 <th>Имя группы</th>
@@ -29,6 +29,7 @@
                 <td width="200px" align="center"><a href="/DeleteGroup/?Group_id={{ group.channelgroup_id }}"><img src="{% static 'icons/Delete.png' %}"/></a></td>
             </tr>
 
+
          <script type="text/javascript">
          $.ajax({
             type: "GET",
@@ -44,6 +45,7 @@
 
     {% endfor %}
     </table>
+</div>
     {% block test %}{% endblock %}
 
 {% endblock %}

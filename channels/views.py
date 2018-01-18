@@ -6,7 +6,7 @@ from django.views.generic.edit import FormView
 from django.views.generic.base import View
 
 from .models import TA, ChannelGroup, Channels_in_group, Channel, TA_in_channel
-from .forms import ChannelGroupForm, Channels_in_groupForm
+from .forms import ChannelGroupForm, Channels_in_groupForm,TAForm,ChannelForm,TA_in_channelForm
 
 from .tasks import task1, task2, task3, task4
 
@@ -71,7 +71,124 @@ class LogoutView(View):
 # My func
 
 def Administration(request):
-    return render(request,"Administration.html",{'channels': Channel.objects.all(), 'TAs': TA.objects.all()})
+    if request.user.is_superuser:
+
+        if request.method=="GET":
+            error = ""
+            pass
+        else:
+            data = request.POST
+            option=data['Option']
+            error = []
+
+            if option =="New_ta":
+                form = TAForm(request.POST)
+                if form.is_valid():
+                   TAName = form.cleaned_data['TA_name']
+                   TASize = form.cleaned_data['TA_Size']
+                   New_TA = TA.objects.create(TA_name=TAName,TA_Size=TASize)
+                   New_TA.save()
+                else:
+                    pass
+            if option == "Delete_ta":
+                TA_to_del = TA.objects.get(TA_id=data["TA_id"])
+                Ta_in_channels_to_del=TA_in_channel.objects.filter(TA=TA_to_del)
+                Ta_in_channels_to_del.delete()
+                TA_to_del.delete()
+            else:
+                pass
+            if option == "Change_ta":
+                form = TAForm(request.POST)
+                if form.is_valid():
+                    TA_to_change=TA.objects.get(TA_id=data["TA_id"])
+                    TA_to_change.TA_name = form.cleaned_data['TA_name']
+                    TA_to_change.TA_Size = form.cleaned_data['TA_Size']
+                    TA_to_change.save()
+                else:
+                    pass
+            if option == "New_channel":
+                form =ChannelForm(request.POST)
+                if form.is_valid():
+                    channel_name = form.cleaned_data["channel_name"]
+                    New_channel=Channel.objects.create(channel_name=channel_name)
+                    New_channel.save()
+                else:
+                    pass
+            if option == "Delete_channel":
+                channel_to_del = Channel.objects.get(channel_id=data["Сhannel_id"])
+                Ta_in_channels_to_del=TA_in_channel.objects.filter(channel = channel_to_del)
+                Ta_in_channels_to_del.delete()
+                channel_to_del.delete()
+            else:
+                pass
+            if option == "Change_channel":
+                form = ChannelForm(request.POST)
+                if form.is_valid():
+                    Channel_to_change=Channel.objects.get(channel_id=data["channel_id"])
+                    Channel_to_change.channel_name = form.cleaned_data['channel_name']
+                    Channel_to_change.save()
+                else:
+                    pass
+            if option == "New_settings":
+                form = TA_in_channelForm(request.POST)
+                if form.is_valid():
+                    channel = form.cleaned_data["channel"]
+                    ta = form.cleaned_data["TA"]
+                    default_cpm=form.cleaned_data["default_CPM"]
+                    TA_Z = form.cleaned_data["TA_CBU_Z"]
+                    TA_P = form.cleaned_data["TA_CBU_P"]
+                    TA_L = form.cleaned_data["TA_CBU_L"]
+                    Channel_R = form.cleaned_data["Channel_TA_R"]
+
+                    channel_test=TA_in_channel.objects.filter(channel=channel,TA=ta)
+                    if (channel_test.__bool__() == False):
+                        New_option = TA_in_channel.objects.create(channel=channel,TA=ta,default_CPM=default_cpm,TA_CBU_Z=TA_Z,TA_CBU_P=TA_P,TA_CBU_L=TA_L,Channel_TA_R=Channel_R)
+                        New_option.save()
+                    else:
+                        error = "Данная целевая аудитория уже существует у данного канала."
+                else:
+                    pass
+            if option == "Delete_settings_channel":
+                list_to_del = TA_in_channel.objects.get(id=data["List_id"])
+                list_to_del.delete()
+            else:
+                pass
+            if option == "Change_channel_settings":
+                form = TA_in_channelForm(request.POST)
+                if form.is_valid():
+                    channel = form.cleaned_data["channel"]
+                    ta = form.cleaned_data["TA"]
+                    default_cpm = form.cleaned_data["default_CPM"]
+                    TA_Z = form.cleaned_data["TA_CBU_Z"]
+                    TA_P = form.cleaned_data["TA_CBU_P"]
+                    TA_L = form.cleaned_data["TA_CBU_L"]
+                    Channel_R = form.cleaned_data["Channel_TA_R"]
+
+                    if ((channel.channel_name!=data["old_Channel"])or(ta.TA_name!=data["old_TA"])):
+                        test_list=TA_in_channel.objects.filter(TA=ta,channel=channel)
+                        if (test_list.__bool__() == False):
+                            list_to_del=TA_in_channel.objects.get(TA__TA_name=data["old_TA"],channel__channel_name=data["old_Channel"])
+                            list_to_del.delete()
+                            list_to_create=TA_in_channel.objects.create(TA=ta,channel=channel,default_CPM=default_cpm,TA_CBU_Z=TA_Z,TA_CBU_P=TA_P,TA_CBU_L=TA_L,Channel_TA_R= Channel_R)
+                            list_to_create.save()
+                        else:
+                            error = "Эта связка уже существует."
+                    else: # channels and TA not changed
+                        list_to_update = TA_in_channel.objects.get(TA=ta,channel=channel)
+                        list_to_update.default_CPM=default_cpm
+                        list_to_update.TA_CBU_Z=TA_Z
+                        list_to_update.TA_CBU_P=TA_P
+                        list_to_update.TA_CBU_L=TA_L
+                        list_to_update.Channel_TA_R=Channel_R
+                        list_to_update.save()
+                else:
+                    pass
+
+        return render(request, "Administration.html",
+                      {'channels': Channel.objects.all(),"TA_in_channel":TA_in_channel.objects.all() ,"Channel_settings":TA_in_channelForm,'TAs': TA.objects.all(), 'Channel_Form':ChannelForm, 'TAForm': TAForm,"error":error})
+    else:
+        return HttpResponseNotFound("Access denied")
+
 
 def deleteGroup(request):
     if request.method == 'GET':
@@ -224,6 +341,28 @@ def showgroup(request):
     return render(request, 'Group.html',
                   {'group': group, 'result': result, 'groupform':Groupform, 'channels_forms':channels_forms,'errors':errors})
 
+def return_TA(request):
+    try:
+        ta_id = request.GET['ta_id']
+    except:
+        return HttpResponseNotFound("<h1>Something went wrong. Please refresh the page</h1>")
+
+    if request.is_ajax():
+        TA_to_show=TA.objects.get(TA_id=ta_id)
+
+        return JsonResponse({"TA_name":TA_to_show.TA_name,"TA_Size":TA_to_show.TA_Size,"TA_id":TA_to_show.TA_id})
+
+
+def return_Channel(request):
+    try:
+        channel_id = request.GET['channel_id']
+    except:
+        return HttpResponseNotFound("<h1>Something went wrong. Please refresh the page</h1>")
+
+    if request.is_ajax():
+        Channel_to_show=Channel.objects.get(channel_id=channel_id)
+
+        return JsonResponse({"channel_name":Channel_to_show.channel_name,"channel_id":Channel_to_show.channel_id})
 
 def return_channels_onta(request):
     try:
@@ -268,6 +407,16 @@ def return_channels_onta(request):
         return JsonResponse({"channels":channels})
 
     return HttpResponse("Channels not found")
+
+def return_ta_in_channels(request):
+    try:
+        id = request.GET['id']
+    except:
+        return HttpResponseNotFound("<h1>Something went wrong. Please refresh the page</h1>")
+
+    if request.is_ajax():
+        list_to_show=TA_in_channel.objects.get(id=id)
+        return JsonResponse({"channel_name":list_to_show.channel.channel_name,"ta_name":list_to_show.TA.TA_name,"default_cpm":list_to_show.default_CPM,'TA_Z':list_to_show.TA_CBU_Z,'TA_P':list_to_show.TA_CBU_P,'TA_L':list_to_show.TA_CBU_L,"channel_r":list_to_show.Channel_TA_R,"id":list_to_show.id})
 
 
 def showchannel_ingroup(request):

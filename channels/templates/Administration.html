@@ -4,7 +4,7 @@
 
     <style>
     .div_style {
-    width:800px;
+    width:900px;
     margin:0 auto;
     padding: 10px; /* Поля вокруг текста */
         border: 2px;
@@ -12,9 +12,17 @@
     </style>
 
 
-    <form method="POST">
+
 
     <div class="div_style" >
+
+        {% if error %}
+
+                <br><div class="alert alert-warning" role="alert">
+                <br> <strong class="pageelem">Не удалось сохранить данные.</strong>
+                <p><label class="pageelem">{{ error }}</label></p>
+                </div>
+    {% endif %}
 
 <div class="panel-group" id="accordion">
   <!-- 1 панель -->
@@ -40,13 +48,14 @@
         <thead >
         <tr>
         <th width="120" >{{ channel.channel_name }}</th>
-        <th width="20" ><a href="/">изменить</a></th>
-        <th width="20" ><a  href="/">удалить</a></th>
+        <th width="20" ><button type="button" onclick="change_Channel({{  channel.channel_id }},'Channel')" class="btn btn-success" data-toggle="modal" data-target="#Channel_change_modal">изменить</button></th>
+        <th width="20" ><button type="button" onclick="delete_Channel({{ channel.channel_id }},'Channel')" class="btn btn-danger" data-toggle="modal" data-target="#Channel_delete_modal">удалить</button></th>
         </tr>
         </thead>
         {% endfor %}
             <tr>
-            <td><a href="#myModal_Channel" class="btn btn-primary" data-target="#myModal_Channel" data-toggle="modal">Добавить</a>  </td>
+            <td>  <!-- Trigger the modal with a button -->
+      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#Сhannel_modal">Добавить</button>  </td>
             </tr>
             </table>
             </div>
@@ -77,60 +86,555 @@
         <tr>
         <th width="180" >{{ ta.TA_name }}</th>
         <th width="120" >{{ ta.TA_Size }}</th>
-        <th width="20" ><a href="/">изменить</a></th>
-        <th width="20" ><a  href="/">удалить</a></th>
+        <th width="20" ><button type="button" onclick="change_TA({{ ta.TA_id }},'TA')" class="btn btn-success" data-toggle="modal" data-target="#TA_change_modal">изменить</button></th>
+        <th width="20" ><button type="button" onclick="delete_TA({{ ta.TA_id }},'TA')" class="btn btn-danger" data-toggle="modal" data-target="#TA_delete_modal">удалить</button></th>
         </tr>
         </thead>
         {% endfor %}
             <tr>
             <td>
-            <a data-toggle="modal" href="#AddTA">Добавить целевую Аудиторию</a>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#TA_modal">Добавить</button>
             </tr>
             </table>
             </div>
 
       </div>
     </div>
-
-
-
-  </div>
-</div>
-
-
-
-<div class="container">
-  <!-- Trigger the modal with a button -->
-      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Add/change AWS alert</button>
-  </p>
-
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">AWS alert</h4>
-        </div>
-        <div class="modal-body">
-            <form action="/modules/aws_alert/" method="POST" class="post-form">{% csrf_token %}
-                <button onclick="submitForms()" type="submit" class="save btn btn-default">Save alert</button>
-            </form>
-        </div>
-          <!---
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-        --->
+    <!-- 3 панель -->
+  <div class="panel panel-default">
+    <!-- Заголовок 3 панели -->
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Настройки каналов</a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse in">
+      <!-- Содержимое 3 панели -->
+      <div class="panel-body">
+            <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Канал</th>
+                <th>Целевая аудитория</th>
+                <th>Цена за 1000 показов</th>
+                <th>TA Z</th>
+                <th>TA P</th>
+                <th>TA L</th>
+                <th>Охват канала</th>
+            </tr>
+            </thead>
+        {% for option in TA_in_channel %}
+        <thead >
+        <tr>
+        <th width="60" >{{ option.channel.channel_name }}</th>
+        <th width="120" >{{ option.TA.TA_name }}</th></th>
+        <th width="50" >{{ option.default_CPM}}</th>
+        <th width="30" >{{ option.TA_CBU_Z}}</th>
+        <th width="30" >{{ option.TA_CBU_P}}</th>
+        <th width="30" >{{ option.TA_CBU_L}}</th>
+        <th width="20" >{{ option.Channel_TA_R}}</th>
+        <th width="20" ><button type="button" onclick="change_channel_settings({{ option.id}},'Channel_settings')" class="btn btn-success" data-toggle="modal" data-target="#Channel_settings_change_modal">изменить</button></th>
+        <th width="20" ><button type="button" onclick="delete_channel_settings({{ option.id }},'Channel_settings')" class="btn btn-danger" data-toggle="modal" data-target="#Channel_settings_delete_modal">удалить</button></th>
+        </tr>
+        </thead>
+        {% endfor %}
+            <tr>
+            <td>  <!-- Trigger the modal with a button -->
+      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#Сhannel_settings_modal">Добавить</button>  </td>
+            </tr>
+            </table>
+            </div>
       </div>
-
     </div>
   </div>
 </div>
 
-    </form>
+
+    <div id="Сhannel_modal" class="modal">
+      <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Добавление канала</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+             <table class="table table-hover">
+            <thead>
+            <tr>
+                {% csrf_token %}
+                <th>Имя нового канала</th>
+                <td>{{ Channel_Form.channel_name }}</td>
+            </tr>
+            </thead>
+          </table>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary c">Сохранить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+      </div>
+    </div>
+  </div>
+          <input name="Option" required="" text="New_channel" id="New_channel" value="New_channel" style="visibility: hidden" >
+      </form>
+</div>
+
+    <div id="Channel_change_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h5 class="modal-title">Изменение канала</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <ul class="result"></ul>
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required=""  text="Change_channel" id="Change_channel" value="Change_channel" style="visibility: hidden" >
+        </form>
+</div>
+
+    <div id="Channel_delete_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h5 class="modal-title">Удаление канала</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <ul class="result"></ul>
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary c">Удалить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required="" text="Delete_channel" id="Delete_channel" value="Delete_channel" style="visibility: hidden" >
+        </form>
+</div>
+
+    <div id="TA_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Добавление целевой аудитории</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+             <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Имя целевой аудитории</th>
+                <th>{{ TAForm.TA_name }}</th>
+            </tr>
+            <tr>
+                <th>Размер целевой аудитории</th>
+                <th>{{ TAForm.TA_Size }}</th>
+            </tr>
+            </thead>
+          </table>
+
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary c">Сохранить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required="" text="New_ta" id="New_ta" value="New_ta" style="visibility: hidden" >
+        </form>
+</div>
+
+    <div id="TA_change_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h5 class="modal-title">Изменение целевой аудитории</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <ul class="result"></ul>
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required=""  text="Change_ta" id="Change_ta" value="Change_ta" style="visibility: hidden" >
+        </form>
+</div>
+
+    <div id="TA_delete_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h5 class="modal-title">Удаление целевой аудитории</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <ul class="result"></ul>
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary c">Удалить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required="" text="Delete_ta" id="Delete_ta" value="Delete_ta" style="visibility: hidden" >
+        </form>
+</div>
+
+    <div id="Сhannel_settings_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Добавление настроек канала</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+             <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Канал</th>
+                <th>{{ Channel_settings.channel }}</th>
+            </tr>
+            <tr>
+                <th>Целевая аудитория</th>
+                <th>{{ Channel_settings.TA }}</th>
+            </tr>
+            <tr>
+                <th>Цена за 1000 показов</th>
+                <th>{{ Channel_settings.default_CPM }}</th>
+            </tr>
+            <tr>
+                <th>TA Z</th>
+                <th>{{ Channel_settings.TA_CBU_Z }}</th>
+            </tr>
+            <tr>
+                <th>TA P</th>
+                <th>{{ Channel_settings.TA_CBU_P }}</th>
+            </tr>
+            <tr>
+                <th>TA L</th>
+                <th>{{ Channel_settings.TA_CBU_L }}</th>
+            </tr>
+            <tr>
+                <th>Охват канала</th>
+                <th>{{ Channel_settings.Channel_TA_R }}</th>
+            </tr>
+            </thead>
+          </table>
+
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary c">Сохранить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required="" text="New_settings" id="New_settings" value="New_settings" style="visibility: hidden" >
+        </form>
+</div>
+
+    <div id="Channel_settings_delete_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h5 class="modal-title">Удаление настроек канала</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <ul class="result"></ul>
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary ">Удалить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required="" text="Delete_settings_channel" id="Delete_settings_channel" value="Delete_settings_channel" style="visibility: hidden" >
+        </form>
+</div>
+
+    <div id="Channel_settings_change_modal" class="modal">
+        <form method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" >
+        <h5 class="modal-title">Изменение настроек канала</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <ul class="result"></ul>
+      </div>
+      <div class="modal-footer">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+
+      </div>
+    </div>
+  </div>
+            <input name="Option" required=""  text="Change_channel_settings" id="Change_channel_settings" value="Change_channel_settings" style="visibility: hidden" >
+        </form>
+</div>
+
+
+    <script>
+        function delete_TA(object_id,object_type) {
+            ta_id = object_id
+
+            $.get("/return_TA/?ta_id=" + ta_id, function (data) {
+                var ta_name = data["TA_name"]
+                var ta_size = data["TA_Size"]
+                var ta_id = data["TA_id"]
+
+                var html = '<table class="table table-hover"><thead><tr>' +
+                    '<th>Имя целевой аудитории</th>' +
+                    '<th>' + ta_name + '</th>' +
+                    '</th><tr>' +
+                    '<th>Размер целевой аудитории</th>' +
+                    '<th>' + ta_size + '</th>' +
+                    '</tr></thead></table>' +
+                    '<input name="TA_id" required="" text="' + ta_id + '" id="' + ta_id + '" value="' + ta_id + '" style="visibility: hidden" >'
+
+                $('ul[class="result"]').html(html);
+            });
+        }
+
+        function change_TA(object_id,object_type) {
+        ta_id=object_id
+
+         $.get("/return_TA/?ta_id="+ta_id, function(data) {
+                var ta_name=data["TA_name"]
+                var ta_size=data["TA_Size"]
+                var ta_id=data["TA_id"]
+
+                var html='<table class="table table-hover"><thead><tr>'+
+                '<th>Имя целевой аудитории</th>'+
+                '<th>' +ta_name+'</th>'+
+                '<th>' + '<input type="text" name="TA_name" maxlength="100" required="" id="id_TA_name" value="'+ta_name+'">'+ '</th>' +
+            '</tr><tr>'+
+                '<th>Размер целевой аудитории</th>'+
+                '<th>'+ta_size+'</th>'+
+                '<th>' + '<input type="number" name="TA_Size" required="" id="id_TA_Size" value="'+ta_size+'"></input>'+ '</th>' +
+            '</tr></thead></table>'+
+                '<input name="TA_id" required="" text="'+ta_id+'" id="'+ta_id+'" value="'+ta_id+'" style="visibility: hidden" >'
+
+                $('ul[class="result"]').html(html);
+
+
+
+         });
+
+
+
+        }
+
+        function delete_Channel(object_id,object_type) {
+            channel_id = object_id
+
+            $.get("/return_channel/?channel_id=" + channel_id, function (data) {
+                var channel_name = data["channel_name"]
+                var channel_id = data["channel_id"]
+
+                var html = '<table class="table table-hover"><thead><tr>' +
+                    '<th>Имя канала</th>' +
+                    '<th>' + channel_name + '</th>' +
+                    '</th></thead></table>' +
+                    '<input name="Сhannel_id" required="" text="' + channel_id + '" id="' + channel_id + '" value="' + channel_id + '" style="visibility: hidden" >'
+
+                $('ul[class="result"]').html(html);
+            });
+        }
+
+        function change_Channel(object_id,object_type) {
+        channel_id=object_id
+
+         $.get("/return_channel/?channel_id=" + channel_id, function (data) {
+                var channel_name = data["channel_name"]
+                var channel_id = data["channel_id"]
+
+                var html='<table class="table table-hover"><thead><tr>'+
+                '<th>Имя канала</th>'+
+                '<th>' +channel_name+'</th>'+
+                '<th>' + '<input type="text" name="channel_name" maxlength="100" required="" id="id_TA_name" value="'+channel_name+'">'+ '</th>' +
+            '</tr></thead></table>'+
+                '<input name="channel_id" required="" text="'+channel_id+'" id="'+channel_id+'" value="'+channel_id+'" style="visibility: hidden" >'
+
+                $('ul[class="result"]').html(html);
+
+
+
+         });
+
+
+
+        }
+
+        function delete_channel_settings(object_id,object_type) {
+             id = object_id
+
+            $.get("/return_ta_in_channels/?id=" + id, function (data) {
+                var channel_name = data["channel_name"]
+                var ta_name = data["ta_name"]
+                var default_cpm = data["default_cpm"]
+                var TA_Z = data["TA_Z"]
+                var TA_P = data["TA_P"]
+                var TA_L = data["TA_L"]
+                var channel_r = data["channel_r"]
+                var id = data["id"]
+
+                var html = '<table class="table table-hover"><thead><tr>' +
+                    '<th>Имя канала</th>' +
+                    '<th>' + channel_name + '</th></tr>' +
+                    '<tr><th>Имя целевой аудитории</th>' +
+                    '<th>' + ta_name + '</th></tr>' +
+                    '<tr><th>Цена за 1000 показов</th>' +
+                    '<th>' + default_cpm + '</th></tr>' +
+                    '<tr><th>TA Z</th>' +
+                    '<th>' + TA_Z + '</th></tr>' +
+                    '<tr><th>TA P</th>' +
+                    '<th>' + TA_P + '</th></tr>' +
+                    '<tr><th>TA L</th>' +
+                    '<th>' + TA_L + '</th></tr>' +
+                    '<tr><th>Охват канала</th>' +
+                    '<th>' + channel_r + '</th></tr>' +
+                    '</th></thead></table>' +
+                    '<input name="List_id" required="" text="' + id + '" id="' + id + '" value="' + id + '" style="visibility: hidden" >'
+
+                $('ul[class="result"]').html(html);
+            });
+        }
+
+        function change_channel_settings(object_id,object_type) {
+        id = object_id
+
+            $.get("/return_ta_in_channels/?id=" + id, function (data) {
+                var channel_name = data["channel_name"]
+                var ta_name = data["ta_name"]
+                var default_cpm = data["default_cpm"]
+                var TA_Z = data["TA_Z"]
+                var TA_P = data["TA_P"]
+                var TA_L = data["TA_L"]
+                var channel_r = data["channel_r"]
+                var id = data["id"]
+
+                html_ta='<select name="TA" required="" id="id_TA">'
+                {% for ta in TAs %}
+                    if ("{{  ta.TA_name }}"==ta_name)
+                    {
+                        html_ta = html_ta + "<option value="+"{{ ta.TA_id }}"+" selected>" + "{{ ta.TA_name }}" + "</option>";
+                    }
+                    else {
+                        html_ta = html_ta + "<option value="+"{{ ta.TA_id }}"+">" + "{{ ta.TA_name }}" + "</option>";
+                    }
+
+                {% endfor %}
+                    html_ta= html_ta+'</select>'
+
+                html_channel='<select name="channel" required="" id="id_channel">'
+                {% for channel in channels %}
+
+                    if ("{{ channel.channel_name }}"==channel_name)
+                    {
+                        html_channel = html_channel + "<option value="+"{{channel.channel_id}}"+" selected>" + "{{ channel.channel_name }}" + "</option>";
+                    }
+                    else {
+                        html_channel = html_channel + "<option value="+"{{channel.channel_id}}"+">" + "{{ channel.channel_name }}" + "</option>";
+                    }
+
+                {% endfor %}
+                    html_channel=html_channel+'</select>'
+
+
+                var html = '<table class="table table-hover"><thead><tr>' +
+                    '<th>Имя канала</th>' +
+                    '<th>' + channel_name + '</th> <th>'+html_channel+'</th></tr>' +
+                    '<tr><th>Имя целевой аудитории</th>' +
+                    '<th>' + ta_name + '</th> <th>'+html_ta+'</th></tr>' +
+                    '<tr><th>Цена за 1000 показов</th>' +
+                    '<th>' + default_cpm + '</th> <th><input name="default_CPM" required="" value="'+default_cpm+'"></th> </tr>' +
+                    '<tr><th>TA Z</th>' +
+                    '<th>' + TA_Z + '</th> <th><input name="TA_CBU_Z" required="" value="'+TA_Z+'"></th> </tr>' +
+                    '<tr><th>TA P</th>' +
+                    '<th>' + TA_P + '</th> <th><input name="TA_CBU_P" required="" value="'+TA_P+'"></th> </tr>' +
+                    '<tr><th>TA L</th>' +
+                    '<th>' + TA_L + '</th> <th><input name="TA_CBU_L" required="" value="'+TA_L+'"></th> </tr>' +
+                    '<tr><th>Охват канала</th>' +
+                    '<th>' + channel_r + '</th> <th><input name="Channel_TA_R" required="" value="'+channel_r+'"></th> </tr>' +
+                    '</th></thead></table>' +
+                    '<input name="List_id" required="" text="' + id + '" id="' + id + '" value="' + id + '" style="visibility: hidden" >'+
+                    '<input name="old_TA" required="" text="' + ta_name + '" id="' + ta_name + '" value="' + ta_name + '" style="visibility: hidden" >'+
+                    '<input name="old_Channel" required="" text="' + channel_name + '" id="' + channel_name + '" value="' + channel_name + '" style="visibility: hidden" >'
+
+
+
+
+
+
+
+
+                $('ul[class="result"]').html(html);
+
+
+
+         });
+
+
+
+        }
+
+
+    </script>
+
 
 {% endblock %}
 
